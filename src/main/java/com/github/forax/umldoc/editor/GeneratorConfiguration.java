@@ -30,25 +30,25 @@ public record GeneratorConfiguration(String filterPackage, Generator generator) 
     Objects.requireNonNull(generator);
   }
 
-
+  public static GeneratorConfiguration filterPackage(String packageName, Generator generator) {
+    return new GeneratorConfiguration(packageName, generator);
+  }
 
   /**
    * This method generate the schema in the writer.
    *
-   * @param writer the writer
-   *
-   * @param module the list of package we want to filter
-   * @throws IOException due to the use of Writer
+   * @param writer
+   *         the writer
+   * @param module
+   *         the list of package we want to filter
+   * @throws IOException
+   *         due to the use of Writer
    */
   public void generate(Writer writer, List<Package> module) throws IOException {
     var p = filterPackage(module);
     var entities = p.entities();
     var dependencies = p.dependencies();
     generator.generate(false, entities, dependencies, writer);
-  }
-
-  public static GeneratorConfiguration filterPackage(String packageName, Generator generator) {
-    return new GeneratorConfiguration(packageName, generator);
   }
 
   Package filterPackage(List<Package> module) {
@@ -58,6 +58,14 @@ public record GeneratorConfiguration(String filterPackage, Generator generator) 
                  .findFirst()
                  .orElseThrow(() -> new IllegalArgumentException(
                          "package %s not found in module".formatted(filterPackage)));
+  }
+
+
+  /**
+   * An enum that represents the supported diagram type.
+   */
+  public enum DiagramArchetype {
+    Class, Sequence
   }
 
 }
